@@ -120,12 +120,13 @@ ORDERS = json.loads((DATA_DIR / "orders.json").read_text(encoding="utf-8"))
 DOCS = json.loads((DATA_DIR / "docs.json").read_text(encoding="utf-8"))
 
 SUGGESTIONS = [
-    "Where's order NL-52210 and why is it delayed?",
-    "What's our damaged goods claim policy?",
-    "NL-48213 is stuck at a state tax checkpoint — walk me through why and what we tell the customer.",
+    "Onde está o pedido NL-52210 e por que ele está atrasado?",
+    "Qual é a nossa política de sinistro por avaria?",
+    "O pedido NL-48213 está retido num posto fiscal — explica por que e o que dizemos ao cliente.",
 ]
 
 SYSTEM_PROMPT = """You are the routing brain behind NordLog's internal Ops Copilot. You receive a support question, NordLog's full order database, and a short list of policy document CANDIDATES that a vector search has already retrieved as the most semantically similar to the question (each candidate includes its similarity score). Decide whether answering requires the ORDER DATABASE (structured facts: status, ETA, carrier, region, delay reason), the POLICY CANDIDATES, or BOTH.
+Write the "answer" field in Brazilian Portuguese (PT-BR), regardless of the language the question was asked in.
 Respond with strict JSON only — no markdown fences, no prose outside the JSON — matching exactly this shape:
 {"route": "database" | "semantic" | "both", "matched_order_ids": string[], "matched_doc_ids": string[], "answer": string}
 Only include a doc id in matched_doc_ids if it is actually relevant to the question and grounds part of the answer — a high similarity score alone does not guarantee relevance, use judgment. The answer must be 2-4 sentences, written like a sharp ops teammate, citing concrete details (order id, status, eta, or exact policy terms) pulled only from matched records. If nothing matches, say so plainly instead of guessing."""
@@ -178,17 +179,26 @@ def ask_copilot(question: str, anthropic_client: Anthropic, voyage_api_key: str,
 # ---------- Session state ----------
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "agent", "text": "NordLog Ops Copilot online. Ask me about an order or a policy — I'll pull whichever source has the answer."}
+        {"role": "agent", "text": "NordLog Ops Copilot online. Pergunte sobre um pedido ou uma política — eu busco na fonte certa."}
     ]
 if "trace" not in st.session_state:
     st.session_state.trace = []
 
 # ---------- Sidebar ----------
+api_key = st.secrets.get("ANTHROPIC_API_KEY", os.environ.get("ANTHROPIC_API_KEY", ""))
+voyage_key = st.secrets.get("VOYAGE_API_KEY", os.environ.get("VOYAGE_API_KEY", ""))
+
 with st.sidebar:
-    st.markdown("### Configuração")
-    api_key = st.text_input("Anthropic API Key", type="password", value=os.environ.get("ANTHROPIC_API_KEY", ""))
-    voyage_key = st.text_input("Voyage AI API Key", type="password", value=os.environ.get("VOYAGE_API_KEY", ""))
-    st.caption("Chaves ficam só na sessão local — não são salvas. Voyage tem free tier em voyageai.com.")
+    st.markdown("### NordLog Ops Copilot")
+    if api_key and voyage_key:
+        st.caption("✅ Conectado — chaves gerenciadas via Secrets do Streamlit Cloud.")
+    else:
+        missing = []
+        if not api_key:
+            missing.append("ANTHROPIC_API_KEY")
+        if not voyage_key:
+            missing.append("VOYAGE_API_KEY")
+        st.error(f"Faltando: {', '.join(missing)}. Adicione em Settings > Secrets no Streamlit Cloud.")
 
 doc_embeddings = None
 if voyage_key:
@@ -198,9 +208,9 @@ if voyage_key:
 col_logo, col_tag = st.columns([3, 2])
 with col_logo:
     st.markdown("<div class='brand-title'>NordLog</div>", unsafe_allow_html=True)
-    st.markdown("<div class='brand-sub'>Ops Copilot — Internal</div>", unsafe_allow_html=True)
+    st.markdown("<div class='brand-sub'>Ops Copilot · powered by Waypoint AI</div>", unsafe_allow_html=True)
 with col_tag:
-    st.markdown("<div class='brand-tag'>one question, two sources<br/>database + policy library</div>", unsafe_allow_html=True)
+    st.markdown("<div class='brand-tag'>uma pergunta, duas fontes<br/>banco de dados + biblioteca de políticas</div>", unsafe_allow_html=True)
 st.write("")
 
 chat_col, trace_col = st.columns([1.3, 1])
@@ -257,24 +267,24 @@ with chat_col:
 
 # ---------- Trace column ----------
 with trace_col:
-    st.markdown("<div style='font-weight:700;font-size:15px;margin-bottom:2px;'>Dispatch trace</div>", unsafe_allow_html=True)
-    st.markdown(f"<div style='font-size:12px;color:{MUTED};margin-bottom:16px;'>how the copilot answered each question</div>", unsafe_allow_html=True)
+    st.markdown("<div style='font-weight:700;font-size:15px;margin-bottom:2px;'>Rastreio da resposta</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-size:12px;color:{MUTED};margin-bottom:16px;'>como o agente respondeu cada pergunta</div>", unsafe_allow_html=True)
 
     if not st.session_state.trace:
         st.markdown(
             f"<div style='font-size:13px;color:{MUTED};border:1px dashed {BORDER};border-radius:12px;padding:16px;'>"
-            "Ask a question to see the routing decision traced here.</div>",
+            "Faça uma pergunta para ver a decisão de roteamento rastreada aqui.</div>",
             unsafe_allow_html=True,
         )
 
     for t in st.session_state.trace:
         route = t["route"]
         if route == "database":
-            badge_color, badge_label = ACCENT_2, "Database query"
+            badge_color, badge_label = ACCENT_2, "Consulta ao banco"
         elif route == "semantic":
-            badge_color, badge_label = ACCENT, "Policy search"
+            badge_color, badge_label = ACCENT, "Busca em política"
         else:
-            badge_color, badge_label = TEXT, "Database + policy search"
+            badge_color, badge_label = TEXT, "Banco + busca em política"
 
         html = f"<div class='trace-card'><div class='badge' style='color:{badge_color};'>{badge_label}</div>"
         html += f"<div style='font-size:13px;color:{MUTED};margin:8px 0;'>{t['question']}</div>"
@@ -286,7 +296,7 @@ with trace_col:
             html += "</div>"
         for d in t["docs"]:
             score = t.get("scores", {}).get(d["id"])
-            score_html = f" <span class='mono' style='color:{MUTED};'>· cosine {score:.3f}</span>" if score is not None else ""
+            score_html = f" <span class='mono' style='color:{MUTED};'>· similaridade {score:.3f}</span>" if score is not None else ""
             html += f"<div class='record'><div style='color:{ACCENT};font-weight:600;'>{d['title']}{score_html}</div>"
             html += f"<div style='color:{MUTED};margin-top:2px;'>{d['body']}</div></div>"
         html += "</div>"
