@@ -1,0 +1,18 @@
+[
+  {"id": "NL-48213", "customer": "Grupo Varejão", "status": "Delayed", "carrier": "TransBrasil Rodoviário", "eta": "2026-08-14", "delay_reason": "Held at the SP–MG state tax checkpoint (posto fiscal) — MOPP hazardous cargo documentation pending", "region": "Southeast — São Paulo hub"},
+  {"id": "NL-48214", "customer": "Solaris Industrial", "status": "In Transit", "carrier": "Ferrovia Sul", "eta": "2026-08-13", "delay_reason": null, "region": "South — Curitiba hub"},
+  {"id": "NL-51002", "customer": "Alimentos Meridiano", "status": "Delivered", "carrier": "TransBrasil Rodoviário", "eta": "2026-08-09 (delivered)", "delay_reason": null, "region": "Southeast — São Paulo hub"},
+  {"id": "NL-51090", "customer": "Atlas Ferragens", "status": "Exception", "carrier": "Ferrovia Sul", "eta": "Pending investigation", "delay_reason": "Damaged pallet reported on arrival at the São Paulo DC", "region": "Southeast — São Paulo hub"},
+  {"id": "NL-52210", "customer": "Malharia Kestrel", "status": "Delayed", "carrier": "Nordeste Express", "eta": "2026-08-16", "delay_reason": "Highway congestion — BR-101 roadworks near Recife", "region": "Northeast — Recife hub"},
+  {"id": "NL-52255", "customer": "União Química", "status": "In Transit", "carrier": "Nordeste Express", "eta": "2026-08-15", "delay_reason": null, "region": "Northeast — Recife hub (hazardous load)"},
+  {"id": "NL-53310", "customer": "Grupo Varejão", "status": "Delivered", "carrier": "TransBrasil Rodoviário", "eta": "2026-08-07 (delivered)", "delay_reason": null, "region": "Southeast — São Paulo hub"},
+  {"id": "NL-53401", "customer": "Alimentos Meridiano", "status": "Exception", "carrier": "TransBrasil Rodoviário", "eta": "Pending investigation", "delay_reason": "Customer requested return — item mismatch", "region": "Southeast — São Paulo hub"},
+  {"id": "NL-54012", "customer": "Norte Eletrônicos", "status": "In Transit", "carrier": "TransBrasil Rodoviário", "eta": "2026-08-17", "delay_reason": null, "region": "Southeast — São Paulo hub"},
+  {"id": "NL-54088", "customer": "Solaris Industrial", "status": "Delayed", "carrier": "Ferrovia Sul", "eta": "2026-08-19", "delay_reason": "Awaiting MOPP paperwork for hazardous components at the PR–SC checkpoint", "region": "South — Curitiba hub"},
+  {"id": "NL-54150", "customer": "Malharia Kestrel", "status": "Delivered", "carrier": "Nordeste Express", "eta": "2026-08-05 (delivered)", "delay_reason": null, "region": "Northeast — Recife hub"},
+  {"id": "NL-54201", "customer": "Atlas Ferragens", "status": "In Transit", "carrier": "TransBrasil Rodoviário", "eta": "2026-08-18", "delay_reason": null, "region": "Southeast — São Paulo hub"},
+  {"id": "NL-54355", "customer": "União Química", "status": "Exception", "carrier": "Nordeste Express", "eta": "Pending investigation", "delay_reason": "Hazardous cargo manifest mismatch flagged at the BA state checkpoint", "region": "Northeast — Recife hub"},
+  {"id": "NL-54402", "customer": "Norte Eletrônicos", "status": "Delayed", "carrier": "Ferrovia Sul", "eta": "2026-08-20", "delay_reason": "Port congestion — Santos", "region": "South — Curitiba hub"},
+  {"id": "NL-54470", "customer": "Grupo Varejão", "status": "In Transit", "carrier": "TransBrasil Rodoviário", "eta": "2026-08-16", "delay_reason": null, "region": "Southeast — São Paulo hub"},
+  {"id": "NL-54501", "customer": "Alimentos Meridiano", "status": "Delivered", "carrier": "Nordeste Express", "eta": "2026-08-06 (delivered)", "delay_reason": null, "region": "Northeast — Recife hub"}
+]
