@@ -1,2 +1,4 @@
 streamlit>=1.32
 anthropic>=0.30
+voyageai>=0.3
+numpy>=1.26
